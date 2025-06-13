@@ -74,7 +74,6 @@ class FneApiService
                 ];
             }
 
-            // Handle API errors
             $errorData = $response->json();
             $certification->update([
                 'certification_status' => 'failed',
