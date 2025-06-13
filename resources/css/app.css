@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Custom styles for FNE Invoice System */
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.table-responsive {
+    min-height: 300px;
+}
+
+.pre-scrollable {
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.badge {
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+/* QR code button styling */
+.btn-qr {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Status badges */
+.badge-certified {
+    background-color: #28a745;
+}
+
+.badge-pending {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-failed {
+    background-color: #dc3545;
+}
+
+/* Tab content styling */
+.tab-content {
+    background-color: #f8f9fa;
+}
+
+pre {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #dee2e6;
+}
