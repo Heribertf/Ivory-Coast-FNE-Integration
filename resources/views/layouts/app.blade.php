@@ -185,6 +185,88 @@
             box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
         }
 
+
+        /* API Status Indicator Styles */
+        .api-status-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-right: 1rem;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.85rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .api-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .api-status.online .api-status-dot {
+            background-color: #28a745;
+            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
+        }
+
+        .api-status.offline .api-status-dot {
+            background-color: #dc3545;
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.3);
+        }
+
+        .api-status.error .api-status-dot {
+            background-color: #ffc107;
+            box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.3);
+        }
+
+        .sticker-balance {
+            font-size: 0.85rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sticker-balance i {
+            margin-right: 0.25rem;
+        }
+
+        /* Mobile Status Styles */
+        .api-status-dot.online {
+            background-color: #28a745;
+        }
+
+        .api-status-dot.offline {
+            background-color: #dc3545;
+        }
+
+        .api-status-dot.error {
+            background-color: #ffc107;
+        }
+
+        .d-lg-none .api-status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        @media (max-width: 991.98px) {
+            .api-status-container {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
         /* Custom buttons */
         /* .btn {
             border-radius: 0.35rem;
@@ -237,10 +319,55 @@
                     <span class="d-none d-sm-inline">MFI Ivory Coast FNE Certification</span>
                     <span class="d-inline d-sm-none">MFI FNE</span>
                 </a>
+
+                <div class="api-status-container d-none d-lg-flex">
+                    <div class="api-status {{ $apiStatus['status'] }}">
+                        <span class="api-status-dot"></span>
+                        <span class="api-status-text">
+                            @if ($apiStatus['status'] === 'online')
+                                Online ({{ $apiStatus['response_time_ms'] }}ms)
+                            @elseif($apiStatus['status'] === 'error')
+                                Error: {{ $apiStatus['error'] }}
+                            @else
+                                Offline
+                            @endif
+                        </span>
+                    </div>
+
+                    @if ($stickerBalance !== null)
+                        <div class="sticker-balance">
+                            <i class="fas fa-sticky-note"></i>
+                            {{ $stickerBalance }} stickers
+                        </div>
+                    @endif
+                </div>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
+
+                    <div class="d-lg-none mb-2 px-3 py-2 text-white">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="api-status-dot {{ $apiStatus['status'] }}"></span>
+                            <small>
+                                @if ($apiStatus['status'] === 'online')
+                                    API Online ({{ $apiStatus['response_time_ms'] }}ms)
+                                @elseif($apiStatus['status'] === 'error')
+                                    API Error: {{ Str::limit($apiStatus['error'], 30) }}
+                                @else
+                                    API Offline
+                                @endif
+                            </small>
+                        </div>
+                        @if ($stickerBalance !== null)
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fas fa-sticky-note"></i>
+                                <small>{{ $stickerBalance }} stickers remaining</small>
+                            </div>
+                        @endif
+                    </div>
+
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link @if (Route::is('fne.invoices.index')) active @endif"
@@ -284,7 +411,8 @@
                                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         <i class="fas fa-sign-out-alt me-2"></i> Logout
                                     </a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                        class="d-none">
                                         @csrf
                                     </form>
                                 </li>

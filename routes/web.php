@@ -4,9 +4,10 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FneInvoiceController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::get('/', [FneInvoiceController::class, 'index'])->name('invoices.index');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

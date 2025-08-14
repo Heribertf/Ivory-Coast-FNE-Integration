@@ -143,7 +143,7 @@ class FneApiService
         $discountPercentage = $this->calculateDiscountPercentage($invoice);
 
         // Determine if this is related to a receipt (RNE)
-        $isRne = !empty($invoice->GrvNumber); // Example - adjust based on MFI business logic
+        $isRne = !empty($invoice->GrvNumber);
 
         return [
             'invoiceType' => 'sale', // or 'purchase' if applicable
@@ -153,10 +153,10 @@ class FneApiService
             'rne' => $isRne ? $invoice->GrvNumber : null,
             'clientNcc' => $invoice->cTaxNumber ?? '',
             'clientCompanyName' => $invoice->cAccountName ?? 'N/A',
-            'clientPhone' => $this->cleanPhoneNumber($invoice->cTelephone ?? '0712345678'),
-            'clientEmail' => $invoice->cEmail ?? '',
+            'clientPhone' => '2722544963',
+            'clientEmail' => 'invoice-ivoirycoast@Cargill.com',
             'clientSellerName' => $invoice->InvNum_iCreatedAgentID ?? '', // Map to salesperson if available
-            'pointOfSale' => config('fne.point_of_sale', '1'),
+            'pointOfSale' => config('fne.point_of_sale', '23'),
             'establishment' => config('fne.establishment_name', 'Main Store'),
             'commercialMessage' => $invoice->Message1 ?? '',
             'footer' => $invoice->Message2 ?? '',
@@ -344,5 +344,47 @@ class FneApiService
                 'error' => $e->getMessage()
             ];
         }
+    }
+
+    public function checkHealth(): array
+    {
+        return cache()->remember('fne_api_status', now()->addMinutes(5), function () {
+            try {
+                $startTime = microtime(true);
+
+                $response = Http::withHeaders([
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                ])->get($this->baseUrl . '/external/health');
+
+                $responseTime = round((microtime(true) - $startTime) * 1000, 2);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    return [
+                        'success' => true,
+                        'status' => 'online',
+                        'response_time_ms' => $responseTime,
+                        'version' => $data['version'] ?? null,
+                        'timestamp' => $data['timestamp'] ?? null,
+                    ];
+                }
+
+                return [
+                    'success' => false,
+                    'status' => 'error',
+                    'response_time_ms' => $responseTime,
+                    'error' => $response->json()['message'] ?? 'API returned status: ' . $response->status(),
+                    'status_code' => $response->status()
+                ];
+
+            } catch (Exception $e) {
+                return [
+                    'success' => false,
+                    'status' => 'offline',
+                    'error' => $e->getMessage()
+                ];
+            }
+        });
     }
 }

@@ -224,7 +224,6 @@ class FneInvoiceController extends Controller
             $updated = 0;
 
             foreach ($invoices as $invoice) {
-                // Check if already certified and we're not forcing resync
                 if ($invoice->isCertified() && !$request->force_resync) {
                     continue;
                 }

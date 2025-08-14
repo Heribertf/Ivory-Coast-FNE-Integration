@@ -115,7 +115,7 @@ return [
         'sage_db_connection' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),
-            'host' => env('DB_HOST', 'localhost'),
+            'host' => env('SAGE_DB_HOST', 'localhost'),
             'port' => env('DB_PORT', '1433'),
             'database' => env('SAGE_DB_DATABASE', 'MFI-MDS'),
             'username' => env('SAGE_DB_USERNAME', 'root'),
